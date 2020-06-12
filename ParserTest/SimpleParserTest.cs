@@ -14,28 +14,30 @@ namespace ParserTest
         {
         }
 
-        [TestCase("12+20", ExpectedResult = true)]
-        [TestCase("15+16*20", ExpectedResult = true)]
-        [TestCase("sin15+sin30", ExpectedResult = true)]
-        [TestCase(".21-5", ExpectedResult = true)]
-        [TestCase("5", ExpectedResult = true)]
-        [TestCase("-5", ExpectedResult = true)]
+        [TestCase("12+20", ExpectedResult = 32)]
+        [TestCase("15+16*20", ExpectedResult = 335)]
+        [TestCase("sin15+sin30", ExpectedResult = 0.15)]
+        [TestCase(".21-5", ExpectedResult = 4.79)]
+        [TestCase("5", ExpectedResult = 5)]
+        [TestCase("-5", ExpectedResult = -5)]
 
-        [TestCase("2++4", ExpectedResult = false)]
-        [TestCase("--84+1", ExpectedResult = false)]
-        [TestCase("--84+1", ExpectedResult = false)]
+        [TestCase("2++4", ExpectedResult = 6)]
+        [TestCase("--84+1", ExpectedResult = 85)]
+        [TestCase("--84++1", ExpectedResult = 85)]
 
-        [TestCase("(2+3) + 5", ExpectedResult = true)]
-        [TestCase("((2+3) - (2*2)) + (1+1)", ExpectedResult = true)]
+        [TestCase("(2+3) + 5", ExpectedResult = 10)]
+        [TestCase("((2+3) - (2*2)) + (1+1)", ExpectedResult = 3)]
 
-        public bool Test1(string textToParse)
+        [TestCase("-2-4-6+5+3", ExpectedResult = -4)]
+        [TestCase("-2+4-6+5-3", ExpectedResult = -2)]
+
+        public decimal Test1(string textToParse)
         {
             var parser = new Parser();
-            var actions = parser.Parse(textToParse);
-            var calculator = new CalculationProcessor(actions);
-            calculator.Calculate();
+            var result = parser.Parse(textToParse);
+            //var calculator = new CalculationProcessor(actions);
+            //var result = calculator.Calculate();
 
-            var result = false;
             return result;
         }
 
@@ -76,6 +78,15 @@ namespace ParserTest
                     break;
                 }
             }
+        }
+
+        [TestCase("-2-4-6+5+3")]
+        [TestCase("-2+4-6+5-3")]
+        [TestCase("2+4-6+5-3")]
+        public void EvaluatorTest(string expression)
+        {
+            var stf = new StringToFormula();
+            stf.Eval(expression);
         }
     }
 }
