@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ParserCore
 {
     public class Parser
     {
-        private Dictionary<int, List<string>> sequenceOfActions = new Dictionary<int, List<string>>();
+        private string TextToParse;
         private int depthLevel = 0;
 
         public Parser()
@@ -19,48 +20,79 @@ namespace ParserCore
         public decimal Parse(string textToParse)
         {
             // If the number contains a fraction, it is required that it does not start with decimal point.
-            CompleteNumbersToCorrectFormat(textToParse);
+            //CompleteNumbersToCorrectFormat(textToParse);
+            TextToParse = textToParse;
 
-            sequenceOfActions[depthLevel] = new List<string>() { textToParse };
-            var doWhile = 0;
-            while (doWhile <= 4)
+            do
             {
-                doWhile++;
-                ++depthLevel;
-                var expressionsToParse = DivideByOperatorsPriority();
-            }
+                var textToProcess = TextToParse;
+                //foreach (var singleNumberInBrackets in Regex.Matches(textToProcess, @"\(-?\w+[,.]?\w*\)"))
+                //{
+                //    var index = textToProcess.IndexOf(singleNumberInBrackets.ToString());
+                //    textToProcess = textToProcess.Remove(index, singleNumberInBrackets.ToString().Length);
+                //}
 
-            return decimal.Parse(sequenceOfActions[0][0]);
+                while (textToProcess.Contains('(') && (!Regex.IsMatch(textToProcess, @"\(-?\w+[,.]?\w*\)") || Regex.IsMatch(textToProcess, @"\(-*?\w+[,.]?\w*\s*[-+*\/\^]\s*\w+[,.]?\w*\)")))
+                {
+                    textToProcess = DivideByBrackets(textToProcess);
+                }
+
+                while (depthLevel < 7)
+                {
+                    ++depthLevel;
+                    textToProcess = DivideByOperatorsPriority(textToProcess);
+                }
+
+                depthLevel = 0;
+            } while (TextToParse.Contains('('));
+
+            return decimal.Parse(TextToParse);
         }
 
         private void CompleteNumbersToCorrectFormat(string textToParse)
         {
             //var a = Regex.Matches(textToParse, @"[,.]");
-            var a = Regex.Split(textToParse, @"[,.]");
+            //var a = Regex.Split(textToParse, @"[,.]");
             //var a = Regex.Matches(textToParse, @"(?!\d[.,])");
 
         }
 
-        private List<string> DivideByOperatorsPriority()
+        private string DivideByOperatorsPriority(string textToProcess)
         {
-            var expressionsToParse = new List<string>();
             var expressionsToCalculate = new List<string>();
+            var expressionType = CalculationType.Addition;
 
             while (true)
             {
                 switch (depthLevel)
                 {
                     case 1:
-                        expressionsToCalculate = DivideByDivision(1);
+                        expressionsToCalculate = TrygonometricFunctions(textToProcess);
+                        expressionType = CalculationType.TrygoFunc;
                         break;
                     case 2:
-                        expressionsToCalculate = DivideByMultiplication(1);
+                        expressionsToCalculate = Roots(textToProcess);
+                        expressionType = CalculationType.Root;
                         break;
                     case 3:
-                        expressionsToCalculate = DivideByMinus(1);
+                        expressionsToCalculate = ToPower(textToProcess);
+                        expressionType = CalculationType.Exponentation;
                         break;
                     case 4:
-                        expressionsToCalculate = DivideByPlus(1);
+                        expressionsToCalculate = DivideByDivision(textToProcess);
+                        expressionType = CalculationType.Division;
+                        break;
+                    case 5:
+                        expressionsToCalculate = DivideByMultiplication(textToProcess);
+                        expressionType = CalculationType.Multiplication;
+                        break;
+                    case 6:
+                        expressionsToCalculate = DivideByMinus(textToProcess);
+                        expressionType = CalculationType.Substraction;
+                        break;
+                    case 7:
+                        expressionsToCalculate = DivideByPlus(textToProcess);
+                        expressionType = CalculationType.Addition;
                         break;
                 }
 
@@ -69,80 +101,120 @@ namespace ParserCore
                     break;
                 }
 
-                var calculator = new CalcProcessor2(expressionsToCalculate);
+                var calculator = new CalcProcessor2(expressionsToCalculate, expressionType);
                 var result = calculator.Calculate();
 
                 for (int i = 0; i < expressionsToCalculate.Count; i++)
                 {
-                    sequenceOfActions[0] = sequenceOfActions[0].Select(s => s.Replace(expressionsToCalculate.First(), result.First())).ToList();
+                    textToProcess = textToProcess.Replace(expressionsToCalculate.First(), result.First());
+                    TextToParse = TextToParse.Replace(expressionsToCalculate.First(), result.First());
                     result.RemoveAt(0);
                     expressionsToCalculate.RemoveAt(0);
                 }
             }
 
-
-            return expressionsToParse;
+            return textToProcess;
         }
 
-        private List<string> DivideByMinus(int priority)
+        private List<string> DivideByMinus(string textToProcess)
         {
             var matchedExpression = new List<string>();
             //var sign = '-';
-            foreach (var a in sequenceOfActions[priority - 1])
+
+            var collection = Regex.Matches(textToProcess, @"\(?-*?\w+[,.]?\w*\)?\s*\-\s*\(?\w+[,.]?\w*\)?");
+            foreach (var m in collection)
             {
-                var collection = Regex.Matches(a, @"(-*\w+[,.]?\w*\-\w+[,.]?\w*)");
-                foreach (var m in collection)
-                {
-                    matchedExpression.Add(m.ToString());
-                }
+                matchedExpression.Add(m.ToString());
             }
 
             return matchedExpression;
         }
 
-        private List<string> DivideByPlus(int priority)
+        private List<string> DivideByPlus(string textToProcess)
         {
             var matchedExpression = new List<string>();
             //var sign = '+';
-            foreach (var a in sequenceOfActions[priority - 1])
+
+            var collection = Regex.Matches(textToProcess, @"\(?-*\w+[,.]?\w*\)?\s*\+\s*\(?\w+[,.]?\w*\)?");
+            foreach (var m in collection)
             {
-                var collection = Regex.Matches(a, @"(-*\w+[,.]?\w*\+\w+[,.]?\w*)");
-                foreach (var m in collection)
-                {
-                    matchedExpression.Add(m.ToString());
-                }
+                matchedExpression.Add(m.ToString());
             }
 
             return matchedExpression;
         }
 
-        private List<string> DivideByMultiplication(int priority)
+        private List<string> DivideByMultiplication(string textToProcess)
         {
             var matchedExpression = new List<string>();
             //var sign = '+';
-            foreach (var a in sequenceOfActions[priority - 1])
+
+            var collection = Regex.Matches(textToProcess, @"\(?-*\w+[,.]?\w*\)?\s*\*\s*\(?\w+[,.]?\w*\)?");
+            foreach (var m in collection)
             {
-                var collection = Regex.Matches(a, @"(-*\w+[,.]?\w*\*\w+[,.]?\w*)");
-                foreach (var m in collection)
-                {
-                    matchedExpression.Add(m.ToString());
-                }
+                matchedExpression.Add(m.ToString());
             }
 
             return matchedExpression;
         }
 
-        private List<string> DivideByDivision(int priority)
+        private List<string> DivideByDivision(string textToProcess)
         {
             var matchedExpression = new List<string>();
             //var sign = '+';
-            foreach (var a in sequenceOfActions[priority - 1])
+
+            var collection = Regex.Matches(textToProcess, @"\(?-*\w+[,.]?\w*\)?\s*\/\s*\(?\w+[,.]?\w*\)?");
+            foreach (var m in collection)
             {
-                var collection = Regex.Matches(a, @"(-*\w+[,.]?\w*\/\w+[,.]?\w*)");
-                foreach (var m in collection)
-                {
-                    matchedExpression.Add(m.ToString());
-                }
+                matchedExpression.Add(m.ToString());
+            }
+
+            return matchedExpression;
+        }
+
+        private List<string> ToPower(string textToProcess)
+        {
+            var matchedExpression = new List<string>();
+            //When Base is negative or/and index is negative, for example (-5)^(-2)
+            var collection = Regex.Matches(textToProcess, @"(\(-\w+[,.]?\w*\)\s*\^\s*\(-\w+[,.]?\w*\))|(\(-\w+[,.]?\w*\)\s*\^\s*\(?\w+[,.]?\w*\)?)|(\(?\w+[,.]?\w*\)?\s*\^\s*\(-\w+[,.]?\w*\))");
+            if (collection?.Count == 0)
+            {
+
+                collection = Regex.Matches(textToProcess, @"\(?\w+[,.]?\w*\)?\s*\^\s*\(?\w+[,.]?\w*\)?");
+            }
+            foreach (var m in collection)
+            {
+                matchedExpression.Add(m.ToString());
+            }
+
+            return matchedExpression;
+        }
+
+        private List<string> Roots(string textToProcess)
+        {
+            var matchedExpression = new List<string>();
+
+            var collection = Regex.Matches(textToProcess, @"sqrt\(\w+[,.]?\w*\)(\(\w+[,.]?\w*\))?");
+
+            foreach (var m in collection)
+            {
+                matchedExpression.Add(m.ToString());
+            }
+
+            return matchedExpression;
+        }
+
+        private List<string> TrygonometricFunctions(string textToProcess)
+        {
+            var matchedExpression = new List<string>();
+            var standardNumber = @"\(?-?\w+[,.]?\w*\)?";
+
+            var collection = Regex.Matches(textToProcess, 
+                $@"sin{standardNumber}|cos{standardNumber}|tg{standardNumber}|ctg{standardNumber}");
+
+            foreach (var m in collection)
+            {
+                matchedExpression.Add(m.ToString());
             }
 
             return matchedExpression;
@@ -202,36 +274,27 @@ namespace ParserCore
         //    return new List<string>(expressionsToParse);
         //}
 
-        //private void DivideByBrackets(string textToParse, int deepingLevel)
-        //{
-        //    var a = textToParse.IndexOf('(');
-        //    var b = textToParse.IndexOf(')');
+        private string DivideByBrackets(string textToParse)
+        {
+            var a = textToParse.IndexOf('(');
+            var b = textToParse.IndexOf(')');
+            var textToVerify = textToParse.Substring(a, b - a + 1);
 
-        //    while (true)
-        //    {
-        //        var actions = new List<string>();
-        //        var textToVerify = textToParse.Substring(a, b - a + 1);
-        //        if (IsProperNumberOfParenthesesInText(textToVerify))
-        //        {
-        //            actions.Add(textToVerify.Substring(1, textToVerify.Length - 2));
-        //            var rest = textToParse.Split(textToVerify);
-        //            foreach (var r in rest)
-        //            {
-        //                if (!string.IsNullOrWhiteSpace(r))
-        //                {
-        //                    actions.Add(PrepareRestExpression(r.Trim()));
-        //                }
-        //            }
+            if (Regex.IsMatch(textToVerify, @"^\(-?\w+[,.]?\w*\)$"))
+            {
+                a = textToParse.IndexOf('(', b++);
+                b = textToParse.IndexOf(')', b++);
+                textToVerify = textToParse.Substring(a, b - a + 1);
+            }
 
-        //            sequenceOfActions[deepingLevel].AddRange(actions);
-        //            break;
-        //        }
-        //        else
-        //        {
-        //            b = textToParse.IndexOf(')', ++b);
-        //        }
-        //    }
-        //}
+            while (!IsProperNumberOfParenthesesInText(textToVerify))
+            {
+                b = textToParse.IndexOf(')', ++b);
+                textToVerify = textToParse.Substring(a, b - a + 1);
+            }
+
+            return textToVerify.Substring(1, textToVerify.Length - 2);
+        }
 
         //private void DivideByOperators(string expression, int depthLevel)
         //{
@@ -252,23 +315,23 @@ namespace ParserCore
         //    }
         //}
 
-        //private bool IsProperNumberOfParenthesesInText(string textToVerify)
-        //{
-        //    int numberOfLeftParentheses = textToVerify.Count(pl => pl == '(');
-        //    int numberOfRightParentheses = textToVerify.Count(pr => pr == ')');
+        private bool IsProperNumberOfParenthesesInText(string textToVerify)
+        {
+            int numberOfLeftParentheses = textToVerify.Count(pl => pl == '(');
+            int numberOfRightParentheses = textToVerify.Count(pr => pr == ')');
 
-        //    return numberOfLeftParentheses == numberOfRightParentheses;
-        //}
+            return numberOfLeftParentheses == numberOfRightParentheses;
+        }
 
-        //private string PrepareRestExpression(string rest)
-        //{
-        //    var result = rest;
-        //    foreach (var op in Operators.operators)
-        //    {
-        //        result = result.TrimStart(op).TrimEnd(op);
-        //    }
+        private string PrepareRestExpression(string rest)
+        {
+            var result = rest;
+            foreach (var op in Operators.operators)
+            {
+                result = result.TrimStart(op).TrimEnd(op);
+            }
 
-        //    return result.Trim();
-        //}
+            return result.Trim();
+        }
     }
 }

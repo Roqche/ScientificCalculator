@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Calculator
 {
     public class CalcProcessor2
     {
         private readonly List<string> expressions;
+        private readonly CalculationType calculationType;
 
-        public CalcProcessor2(List<string> expressions)
+        public CalcProcessor2(List<string> expressions, CalculationType calculationType)
         {
-            this.expressions = expressions;
+            this.expressions = ReplaceConstants(expressions);
+            this.calculationType = calculationType;
         }
 
         public List<string> Calculate()
@@ -20,33 +23,152 @@ namespace Calculator
             var listToReturn = new List<string>();
             if (expressions.Count > 0)
             {
-                foreach (var expression in expressions)
+                switch (calculationType)
                 {
-                    var result = string.Empty;
-
-                    //if (Regex.IsMatch(expression, @"[A-Za-z]+"))
-                    //{
-                    //    result = ConvertFromWord(expression);
-                    //}
-                    //else
-                    //{
-                    try
-                    {
-                        var calculatedExpression = new DataTable().Compute(expression, "");
-                        result = calculatedExpression.ToString();
-                    }
-                    catch (Exception ex)
-                    {
-                        //result = decimal.Round((decimal)(Math.Sin(15) + Math.Sin(30)), 3);
-
-
-                    }
-                    //}
-
-                    listToReturn.Add(result);
+                    case CalculationType.Exponentation:
+                        listToReturn.AddRange(CalculateExponentation(expressions));
+                        break;
+                    case CalculationType.Root:
+                        listToReturn.AddRange(CalculateRoot(expressions));
+                        break;
+                    case CalculationType.TrygoFunc:
+                        listToReturn.AddRange(CalculateTrygonometric(expressions));
+                        break;
+                    default:
+                        listToReturn.AddRange(BaseCalculation(expressions));
+                        break;
                 }
             }
+
             return listToReturn;
+        }
+
+        private List<string> CalculateTrygonometric(List<string> expressions)
+        {
+            var calculatedExpressions = new List<string>();
+
+            foreach (var expression in expressions)
+            {
+                var angle = double.Parse(Regex.Matches(expression, @"\d+[,.]?\d*")[0].ToString());
+                if (expression.StartsWith("sin"))
+                {
+                    var result = Math.Sin(angle);
+                    calculatedExpressions.Add(result.ToString());
+                }
+                else if (expression.StartsWith("cos"))
+                {
+                    var result = Math.Cos(angle);
+                    calculatedExpressions.Add(result.ToString());
+                }
+                else if (expression.StartsWith("tan"))
+                {
+                    var result = Math.Tan(angle);
+                    calculatedExpressions.Add(result.ToString());
+                }
+                else if (expression.StartsWith("sinh"))
+                {
+                    var result = Math.Sinh(angle);
+                    calculatedExpressions.Add(result.ToString());
+                }
+                else if (expression.StartsWith("cosh"))
+                {
+                    var result = Math.Cosh(angle);
+                    calculatedExpressions.Add(result.ToString());
+                }
+                else if (expression.StartsWith("tanh"))
+                {
+                    var result = Math.Tanh(angle);
+                    calculatedExpressions.Add(result.ToString());
+                }
+            }
+
+            return new List<string>(calculatedExpressions);
+        }
+
+        private List<string> BaseCalculation(List<string> expressions)
+        {
+            var calculatedExpressions = new List<string>();
+
+            foreach (var expression in expressions)
+            {
+                var result = string.Empty;
+
+                try
+                {
+                    var calculatedExpression = new DataTable().Compute(expression, "");
+                    result = calculatedExpression.ToString();
+                }
+                catch (Exception ex)
+                {
+                }
+
+                calculatedExpressions.Add(result);
+            }
+
+            return new List<string>(calculatedExpressions);
+        }
+
+        private List<string> CalculateRoot(List<string> expressions)
+        {
+            var calculatedExpressions = new List<string>();
+
+            foreach (var expression in expressions)
+            {
+                var getIndexAndRadicand = Regex.Matches(expression, @"\d+[,.]?\d*");
+                var index = 2d;
+                var radicand = 0d;
+                if (getIndexAndRadicand.Count == 2)
+                {
+                    index = double.Parse(getIndexAndRadicand[0].ToString());
+                    radicand = double.Parse(getIndexAndRadicand[1].ToString());
+                }
+                else
+                {
+                    radicand = double.Parse(getIndexAndRadicand[0].ToString());
+                }
+
+                if (radicand < 0)
+                {
+                    throw new OverflowException("Cannot calculate square root from a negative number");
+                }
+
+                var result = Math.Pow(radicand, 1.0 / index);
+                calculatedExpressions.Add(result.ToString());
+            }
+
+            return new List<string>(calculatedExpressions);
+        }
+
+        private List<string> CalculateExponentation(List<string> expressions)
+        {
+            var calculatedExpressions = new List<string>();
+
+            foreach (var expression in expressions)
+            {
+                var getNumberAndPower = expression.Split('^');
+                var number = double.Parse(getNumberAndPower[0].TrimStart('(').TrimEnd(')'));
+                var power = double.Parse(getNumberAndPower[1].TrimStart('(').TrimEnd(')'));
+
+                var result = Math.Pow(number, power);
+                calculatedExpressions.Add(result.ToString());
+            }
+
+            return new List<string>(calculatedExpressions);
+        }
+
+        private List<string> ReplaceConstants(List<string> expressions)
+        {
+            var replacedExpressions = new List<string>();
+            foreach (var expression in expressions)
+            {
+                var properExpression = expression
+                                            .Replace("pi", Math.PI.ToString())
+                                            .Replace("e", Math.E.ToString());
+
+                replacedExpressions.Add(properExpression);
+            }
+
+            return new List<string>(replacedExpressions);
         }
     }
 }
