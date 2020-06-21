@@ -7,6 +7,8 @@ namespace Calculator
 {
     public class CalcProcessor2
     {
+        private readonly string precisionLevel = "N16";
+
         private readonly List<string> expressions;
         private readonly CalculationType calculationType;
 
@@ -18,7 +20,6 @@ namespace Calculator
 
         public List<string> Calculate()
         {
-            //var listToReturn = 0m;
             var listToReturn = new List<string>();
             if (expressions.Count > 0)
             {
@@ -45,45 +46,42 @@ namespace Calculator
             return listToReturn;
         }
 
-
-
         private List<string> CalculateTrygonometric(List<string> expressions)
         {
             var calculatedExpressions = new List<string>();
+            
 
             foreach (var expression in expressions)
             {
+                var result = 0d;
                 var angle = double.Parse(Regex.Matches(expression, @"\d+[,.]?\d*")[0].ToString());
+
                 if (expression.StartsWith("sin"))
                 {
-                    var result = Math.Sin(angle);
-                    calculatedExpressions.Add(result.ToString());
+                    result = Math.Sin(angle);
                 }
                 else if (expression.StartsWith("cos"))
                 {
-                    var result = Math.Cos(angle);
-                    calculatedExpressions.Add(result.ToString());
+                    result = Math.Cos(angle);
                 }
                 else if (expression.StartsWith("tan"))
                 {
-                    var result = Math.Tan(angle);
-                    calculatedExpressions.Add(result.ToString());
+                    result = Math.Tan(angle);
                 }
                 else if (expression.StartsWith("sinh"))
                 {
-                    var result = Math.Sinh(angle);
-                    calculatedExpressions.Add(result.ToString());
+                    result = Math.Sinh(angle);
                 }
                 else if (expression.StartsWith("cosh"))
                 {
-                    var result = Math.Cosh(angle);
-                    calculatedExpressions.Add(result.ToString());
+                    result = Math.Cosh(angle);
                 }
                 else if (expression.StartsWith("tanh"))
                 {
-                    var result = Math.Tanh(angle);
-                    calculatedExpressions.Add(result.ToString());
+                    result = Math.Tanh(angle);                    
                 }
+
+                calculatedExpressions.Add(result.ToString(precisionLevel));
             }
 
             return new List<string>(calculatedExpressions);
@@ -137,7 +135,7 @@ namespace Calculator
                 }
 
                 var result = Math.Pow(radicand, 1.0 / index);
-                calculatedExpressions.Add(result.ToString());
+                calculatedExpressions.Add(result.ToString(precisionLevel));
             }
 
             return new List<string>(calculatedExpressions);
@@ -154,7 +152,7 @@ namespace Calculator
                 var power = double.Parse(getNumberAndPower[1].TrimStart('(').TrimEnd(')'));
 
                 var result = Math.Pow(number, power);
-                calculatedExpressions.Add(result.ToString());
+                calculatedExpressions.Add(result.ToString(precisionLevel));
             }
 
             return new List<string>(calculatedExpressions);
@@ -174,7 +172,6 @@ namespace Calculator
                 {
                     exponent = double.Parse(baseAndExponent[0].ToString());
                     result = Math.Log(exponent);
-
                 }
                 else if (expression.StartsWith("log"))
                 {
@@ -193,10 +190,9 @@ namespace Calculator
                     }
                 }
 
-
-                calculatedExpressions.Add(result.ToString());
-
+                calculatedExpressions.Add(result.ToString(precisionLevel));
             }
+
             return new List<string>(calculatedExpressions);
         }
 

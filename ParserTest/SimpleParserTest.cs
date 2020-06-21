@@ -82,8 +82,11 @@ namespace ParserTest
         }
 
         [TestCase("sin(pi/2)", ExpectedResult = 1)]
+        [TestCase("sin(pi)", ExpectedResult = 0)]
         [TestCase("sin(pi/2)+cos(pi)", ExpectedResult = 0)]
         [TestCase("cos(pi)", ExpectedResult = -1)]
+        [TestCase("cos(pi/2)", ExpectedResult = 0)]
+        [TestCase("cos(0)", ExpectedResult = 1)]
 
         [TestCase("sin(pi/2)*2", ExpectedResult = 2)]
         [TestCase("5+sin(pi/2)+cos(pi) + 5", ExpectedResult = 10)]

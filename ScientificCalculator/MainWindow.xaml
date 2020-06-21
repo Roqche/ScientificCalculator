@@ -3,10 +3,210 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ScientificCalculator"
+        xmlns:local="clr-namespace:ScientificCalculator" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="ScientificCalculator" 
+        Height="600" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <Border Background="#E5000000">
+        <Grid>
+            <StackPanel>
+                <Grid Height="210">
+                    <StackPanel>
+                        <!--<Button HorizontalAlignment="Left" Margin="10" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{StaticResource PrimaryHueMidForegroundBrush}">
+                            <materialDesign:PackIcon Kind="Menu" Foreground="{StaticResource PrimaryHueLightForegroundBrush}"/>
+                        </Button>-->
+                        <TextBlock FontSize="15" FontFamily="Oswald" Text="30 + 20 = 50" TextAlignment="Right"
+                       Foreground="{StaticResource PrimaryHueLightForegroundBrush}" Margin="20 0 20 10"/>
+                    </StackPanel>
+                    <StackPanel VerticalAlignment="Bottom" FocusManager.FocusedElement="{Binding ElementName=input}">
+                        <TextBlock FontSize="20" FontFamily="Oswald" Text="30 + 47 + 32 -" TextAlignment="Right"
+                       Foreground="{StaticResource PrimaryHueLightForegroundBrush}" Margin="20 0"/>
+                        <TextBox FontSize="35" FontFamily="Oswald" TextAlignment="Right"
+                       Foreground="#FF5885A4" Margin="20 0" Name="input" CaretBrush="Orange">
+                            <!--<TextBlock.Effect>
+                                <DropShadowEffect BlurRadius="10" ShadowDepth="1" Color="#FF5885A4"/>
+                            </TextBlock.Effect>-->
+                        </TextBox>
+                    </StackPanel>
+                </Grid>
+                <Rectangle Height="1" Fill="Gray" Margin="10 0"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
 
-    </Grid>
+                    <Button Grid.Column="0" Grid.Row="0" Margin="5" Name="sqrt" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="SquareRoot" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="0" Grid.Row="1" Margin="5" Content="SINH" Name="sinh" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                    </Button>
+                    <Button Grid.Column="0" Grid.Row="2" Margin="5" Content="COSH" Name="cosh" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                    </Button>
+                    <Button Grid.Column="0" Grid.Row="3" Margin="5" Content="TGH" Name="tgh" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                    </Button>
+                    <Button Grid.Column="0" Grid.Row="4" Margin="5" Content="LOG" Name="log" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                    </Button>
+
+                    <Button Grid.Column="1" Grid.Row="0" Margin="5" Name="exponent" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Exponent" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="1" Grid.Row="1" Margin="5" Content="SIN" Name="sin" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                    </Button>
+                    <Button Grid.Column="1" Grid.Row="2" Margin="5" Content="COS" Name="cos" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                    </Button>
+                    <Button Grid.Column="1" Grid.Row="3" Margin="5" Content="TG" Name="tg" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                    </Button>
+                    <Button Grid.Column="1" Grid.Row="4" Margin="5" Content="LN" Name="ln" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                    </Button>
+
+                    <Button Grid.Column="2" Grid.Row="0" Margin="5" Name="pi" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Pi" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="3" Grid.Row="0" Margin="5" Name="e" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="LetterE" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="4" Grid.Row="0" Margin="5" Name="clear" Click="OnClearButton"
+                  Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="LetterC" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="5" Grid.Row="1" Margin="5" Name="division" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Division" Width="30" Height="30"/>
+                    </Button>
+
+                    <Button Grid.Column="2" Grid.Row="1" Margin="5" Name="_7" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Number7" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="3" Grid.Row="1" Margin="5" Name="_8" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Number8" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="4" Grid.Row="1" Margin="5" Name="_9" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Number9" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="5" Grid.Row="2" Margin="5" Name="multiplication" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Multiplication" Width="30" Height="30"/>
+                    </Button>
+
+                    <Button Grid.Column="2" Grid.Row="2" Margin="5" Name="_4" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Number4" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="3" Grid.Row="2" Margin="5" Name="_5" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Number5" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="4" Grid.Row="2" Margin="5" Name="_6" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Number6" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="5" Grid.Row="3" Margin="5" Name="substraction" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Minus" Width="30" Height="30"/>
+                    </Button>
+
+                    <Button Grid.Column="2" Grid.Row="3" Margin="5" Name="_1" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Number1" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="3" Grid.Row="3" Margin="5" Name="_2" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Number2" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="4" Grid.Row="3" Margin="5" Name="_3" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Number3" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="5" Grid.Row="4" Margin="5" Name="add" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Plus" Width="30" Height="30"/>
+                    </Button>
+
+                    <!--<Button x:Name="ButtonPowerOff" Grid.Column="0" Grid.Row="4" Margin="5"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Power" Width="30" Height="30"/>
+                    </Button>-->
+                    <Button Grid.Column="3" Grid.Row="4" Margin="5" Name="_0" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Number0" Width="30" Height="30"/>
+                    </Button>
+                    <Button Grid.Column="4" Grid.Row="4" Margin="5" Content="." Name="dot" Click="OnButtonClick"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+
+                    </Button>
+                    <Button Grid.Column="5" Grid.Row="0" Margin="5" Name="sum" Click="OnSumButton"
+                  Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                        <materialDesign:PackIcon Kind="Equal" Width="30" Height="30"/>
+                    </Button>
+                </Grid>
+            </StackPanel>
+            <Border x:Name="grid" CornerRadius="10" Background="Black" Visibility="Collapsed" Opacity="0">
+                <Button x:Name="ButtonPowerOn" Grid.Column="0" Grid.Row="1" Margin="5" Width="150" Height="150"
+                  Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+                  BorderThickness="1" BorderBrush="{StaticResource PrimaryHueMidBrush}">
+                    <materialDesign:PackIcon Kind="Power" Width="80" Height="80"/>
+                </Button>
+            </Border>
+        </Grid>
+    </Border>
 </Window>
