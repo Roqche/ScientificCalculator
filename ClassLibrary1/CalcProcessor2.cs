@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Calculator
@@ -34,6 +33,9 @@ namespace Calculator
                     case CalculationType.TrygoFunc:
                         listToReturn.AddRange(CalculateTrygonometric(expressions));
                         break;
+                    case CalculationType.Logarithm:
+                        listToReturn.AddRange(CalculateLogarithm(expressions));
+                        break;
                     default:
                         listToReturn.AddRange(BaseCalculation(expressions));
                         break;
@@ -42,6 +44,8 @@ namespace Calculator
 
             return listToReturn;
         }
+
+
 
         private List<string> CalculateTrygonometric(List<string> expressions)
         {
@@ -153,6 +157,46 @@ namespace Calculator
                 calculatedExpressions.Add(result.ToString());
             }
 
+            return new List<string>(calculatedExpressions);
+        }
+
+        private List<string> CalculateLogarithm(List<string> expressions)
+        {
+            var calculatedExpressions = new List<string>();
+
+            foreach (var expression in expressions)
+            {
+                var baseAndExponent = Regex.Matches(expression, @"\d+[,.]?\d*");
+                double exponent;
+                var result = 0d;
+
+                if (expression.StartsWith("ln"))
+                {
+                    exponent = double.Parse(baseAndExponent[0].ToString());
+                    result = Math.Log(exponent);
+
+                }
+                else if (expression.StartsWith("log"))
+                {
+                    var logarithmBase = 2d;
+
+                    if (baseAndExponent.Count == 2)
+                    {
+                        logarithmBase = double.Parse(baseAndExponent[0].ToString());
+                        exponent = double.Parse(baseAndExponent[1].ToString());
+                        result = Math.Log(exponent, logarithmBase);
+                    }
+                    else
+                    {
+                        exponent = double.Parse(baseAndExponent[0].ToString());
+                        result = Math.Log(exponent, logarithmBase);
+                    }
+                }
+
+
+                calculatedExpressions.Add(result.ToString());
+
+            }
             return new List<string>(calculatedExpressions);
         }
 

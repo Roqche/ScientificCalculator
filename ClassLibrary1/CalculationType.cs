@@ -8,6 +8,7 @@
         Division,
         Exponentation,
         Root,
-        TrygoFunc
+        TrygoFunc,
+        Logarithm
     }
 }

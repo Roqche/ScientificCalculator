@@ -1,9 +1,5 @@
-using Calculator;
 using NUnit.Framework;
 using ParserCore;
-using System.Collections.Generic;
-using System.Data;
-using System.Text.RegularExpressions;
 
 namespace ParserTest
 {
@@ -21,22 +17,15 @@ namespace ParserTest
         [TestCase("5", ExpectedResult = 5)]
         [TestCase("-5", ExpectedResult = -5)]
 
-        [TestCase("2++4", ExpectedResult = 6)]
+        //[TestCase("2++4", ExpectedResult = 6)] //Shouldn't work
         [TestCase("--84+1", ExpectedResult = 85)]
-        [TestCase("--84++1", ExpectedResult = 85)]
+        //[TestCase("--84++1", ExpectedResult = 85)] //Shouldn't work
+        [TestCase("--84--1", ExpectedResult = 85)]
+        [TestCase("--84*-1", ExpectedResult = -84)]
 
         [TestCase("(2+3) + 5", ExpectedResult = 10)]
-        [TestCase("((2+3) - (2*2)) + (1+1)", ExpectedResult = 3)]
-
         [TestCase("-2-4-6+5+3", ExpectedResult = -4)]
         [TestCase("-2+4-6+5-3", ExpectedResult = -2)]
-
-        [TestCase("sin180+sin360", ExpectedResult = 0)]
-        [TestCase("sin(-1/2)", ExpectedResult = 0)]
-        [TestCase("sin(pi/2)", ExpectedResult = 1)]
-        [TestCase("sin(pi/2)+cos(pi)", ExpectedResult = 0)]
-        [TestCase("cos(pi)", ExpectedResult = -1)]
-
 
         public decimal MixedTest(string textToParse)
         {
@@ -44,45 +33,6 @@ namespace ParserTest
             var result = parser.Parse(textToParse);
             return result;
         }
-
-        //[TestCase("(2+3)+5")]
-        //public void Test2(string expression)
-        //{
-        //    List<string> result = new List<string>();
-        //    List<string> tokens = new List<string>();
-
-        //    tokens.Add("^\\(");// matches opening bracket
-        //    tokens.Add("^([\\d.\\d]+)"); // matches floating point numbers
-        //    tokens.Add("^[&|<=>!-+/*]+"); // matches operators and other special characters
-        //    tokens.Add("^[\\w]+"); // matches words and integers
-        //    tokens.Add("^[,]"); // matches ,
-        //    tokens.Add("^[\\)]"); // matches closing bracket
-
-        //    while (0 != expression.Length)
-        //    {
-        //        bool foundMatch = false;
-
-        //        foreach (string token in tokens)
-        //        {
-        //            Match match = Regex.Match(expression, token);
-        //            if (false == match.Success)
-        //            {
-        //                continue;
-        //            }
-
-        //            result.Add(match.Value);
-        //            expression = Regex.Replace(expression, token, "");
-        //            foundMatch = true;
-
-        //            break;
-        //        }
-
-        //        if (false == foundMatch)
-        //        {
-        //            break;
-        //        }
-        //    }
-        //}
 
         [TestCase("5^2", ExpectedResult = 25)]
         [TestCase("5^5", ExpectedResult = 3125)]
@@ -109,6 +59,45 @@ namespace ParserTest
         [TestCase("2 + sqrt(2)(4)-2", ExpectedResult = 2)]
         [TestCase("sqrt(4)", ExpectedResult = 2)]
         public decimal TestRoots(string expression)
+        {
+            var parser = new Parser();
+            var result = parser.Parse(expression);
+            return decimal.Round(result, 4);
+        }
+        
+        [TestCase("ln(e)", ExpectedResult = 1)]
+        [TestCase("log(10)(10)", ExpectedResult = 1)]
+        [TestCase("log(2)(4)", ExpectedResult = 2)]
+        [TestCase("log(4)", ExpectedResult = 2)]
+
+        [TestCase("2*ln(e)", ExpectedResult = 2)]
+        [TestCase("log(10)(10) + 5", ExpectedResult = 6)]
+        [TestCase("4 - log(2)(4)", ExpectedResult = 2)]
+        [TestCase("8/log(4)", ExpectedResult = 4)]
+        public decimal TestLogarithmic(string expression)
+        {
+            var parser = new Parser();
+            var result = parser.Parse(expression);
+            return decimal.Round(result, 4);
+        }
+
+        [TestCase("sin(pi/2)", ExpectedResult = 1)]
+        [TestCase("sin(pi/2)+cos(pi)", ExpectedResult = 0)]
+        [TestCase("cos(pi)", ExpectedResult = -1)]
+
+        [TestCase("sin(pi/2)*2", ExpectedResult = 2)]
+        [TestCase("5+sin(pi/2)+cos(pi) + 5", ExpectedResult = 10)]
+        [TestCase("cos(pi)/3", ExpectedResult = -0.3333)]
+        public decimal TestTrygonometric(string expression)
+        {
+            var parser = new Parser();
+            var result = parser.Parse(expression);
+            return decimal.Round(result, 4);
+        }
+
+        [TestCase("e^ln(e)", ExpectedResult = 2.7183)]
+        [TestCase("((2+3) - (2*2)) + (1+1)", ExpectedResult = 3)]
+        public decimal TestAdvanceExpression(string expression)
         {
             var parser = new Parser();
             var result = parser.Parse(expression);

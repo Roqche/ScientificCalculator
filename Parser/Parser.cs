@@ -37,7 +37,7 @@ namespace ParserCore
                     textToProcess = DivideByBrackets(textToProcess);
                 }
 
-                while (depthLevel < 7)
+                while (depthLevel < 8)
                 {
                     ++depthLevel;
                     textToProcess = DivideByOperatorsPriority(textToProcess);
@@ -71,26 +71,30 @@ namespace ParserCore
                         expressionType = CalculationType.TrygoFunc;
                         break;
                     case 2:
+                        expressionsToCalculate = Logarithm(textToProcess);
+                        expressionType = CalculationType.Logarithm;
+                        break;
+                    case 3:
                         expressionsToCalculate = Roots(textToProcess);
                         expressionType = CalculationType.Root;
                         break;
-                    case 3:
+                    case 4:
                         expressionsToCalculate = ToPower(textToProcess);
                         expressionType = CalculationType.Exponentation;
                         break;
-                    case 4:
+                    case 5:
                         expressionsToCalculate = DivideByDivision(textToProcess);
                         expressionType = CalculationType.Division;
                         break;
-                    case 5:
+                    case 6:
                         expressionsToCalculate = DivideByMultiplication(textToProcess);
                         expressionType = CalculationType.Multiplication;
                         break;
-                    case 6:
+                    case 7:
                         expressionsToCalculate = DivideByMinus(textToProcess);
                         expressionType = CalculationType.Substraction;
                         break;
-                    case 7:
+                    case 8:
                         expressionsToCalculate = DivideByPlus(textToProcess);
                         expressionType = CalculationType.Addition;
                         break;
@@ -104,7 +108,7 @@ namespace ParserCore
                 var calculator = new CalcProcessor2(expressionsToCalculate, expressionType);
                 var result = calculator.Calculate();
 
-                for (int i = 0; i < expressionsToCalculate.Count; i++)
+                while (expressionsToCalculate.Count > 0)
                 {
                     textToProcess = textToProcess.Replace(expressionsToCalculate.First(), result.First());
                     TextToParse = TextToParse.Replace(expressionsToCalculate.First(), result.First());
@@ -121,7 +125,7 @@ namespace ParserCore
             var matchedExpression = new List<string>();
             //var sign = '-';
 
-            var collection = Regex.Matches(textToProcess, @"\(?-*?\w+[,.]?\w*\)?\s*\-\s*\(?\w+[,.]?\w*\)?");
+            var collection = Regex.Matches(textToProcess, @"\(?-*?\w+[,.]?\w*\)?\s*\-+\s*\(?\w+[,.]?\w*\)?");
             foreach (var m in collection)
             {
                 matchedExpression.Add(m.ToString());
@@ -135,7 +139,7 @@ namespace ParserCore
             var matchedExpression = new List<string>();
             //var sign = '+';
 
-            var collection = Regex.Matches(textToProcess, @"\(?-*\w+[,.]?\w*\)?\s*\+\s*\(?\w+[,.]?\w*\)?");
+            var collection = Regex.Matches(textToProcess, @"\(?-*\w+[,.]?\w*\)?\s*\+\s*\(?-*\w+[,.]?\w*\)?");
             foreach (var m in collection)
             {
                 matchedExpression.Add(m.ToString());
@@ -149,7 +153,7 @@ namespace ParserCore
             var matchedExpression = new List<string>();
             //var sign = '+';
 
-            var collection = Regex.Matches(textToProcess, @"\(?-*\w+[,.]?\w*\)?\s*\*\s*\(?\w+[,.]?\w*\)?");
+            var collection = Regex.Matches(textToProcess, @"\(?-*\w+[,.]?\w*\)?\s*\*\s*\(?-*\w+[,.]?\w*\)?");
             foreach (var m in collection)
             {
                 matchedExpression.Add(m.ToString());
@@ -210,7 +214,21 @@ namespace ParserCore
             var standardNumber = @"\(?-?\w+[,.]?\w*\)?";
 
             var collection = Regex.Matches(textToProcess, 
-                $@"sin{standardNumber}|cos{standardNumber}|tg{standardNumber}|ctg{standardNumber}");
+                $@"sin{standardNumber}|cos{standardNumber}|tg{standardNumber}|sinh{standardNumber}|cosh{standardNumber}|tgh{standardNumber}");
+
+            foreach (var m in collection)
+            {
+                matchedExpression.Add(m.ToString());
+            }
+
+            return matchedExpression;
+        }
+
+        private List<string> Logarithm(string textToProcess)
+        {
+            var matchedExpression = new List<string>();
+
+            var collection = Regex.Matches(textToProcess, @"ln\(\w+[,.]?\w*\)|log\(\w+[,.]?\w*\)(\(\w+[,.]?\w*\))?");
 
             foreach (var m in collection)
             {
