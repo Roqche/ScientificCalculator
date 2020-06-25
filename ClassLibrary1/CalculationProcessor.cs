@@ -5,14 +5,14 @@ using System.Text.RegularExpressions;
 
 namespace Calculator
 {
-    public class CalcProcessor2
+    public class CalculationProcessor
     {
         private readonly string precisionLevel = "N16";
 
         private readonly List<string> expressions;
         private readonly CalculationType calculationType;
 
-        public CalcProcessor2(List<string> expressions, CalculationType calculationType)
+        public CalculationProcessor(List<string> expressions, CalculationType calculationType)
         {
             this.expressions = ReplaceConstants(expressions);
             this.calculationType = calculationType;
@@ -49,7 +49,7 @@ namespace Calculator
         private List<string> CalculateTrygonometric(List<string> expressions)
         {
             var calculatedExpressions = new List<string>();
-            
+
 
             foreach (var expression in expressions)
             {
@@ -78,7 +78,7 @@ namespace Calculator
                 }
                 else if (expression.StartsWith("tanh"))
                 {
-                    result = Math.Tanh(angle);                    
+                    result = Math.Tanh(angle);
                 }
 
                 calculatedExpressions.Add(result.ToString(precisionLevel));
@@ -93,16 +93,8 @@ namespace Calculator
 
             foreach (var expression in expressions)
             {
-                var result = string.Empty;
-
-                try
-                {
-                    var calculatedExpression = new DataTable().Compute(expression, "");
-                    result = calculatedExpression.ToString();
-                }
-                catch (Exception ex)
-                {
-                }
+                var calculatedExpression = new DataTable().Compute(expression, "");
+                var result = calculatedExpression.ToString();
 
                 calculatedExpressions.Add(result);
             }
