@@ -7,7 +7,7 @@ namespace Calculator
 {
     public class CalculationProcessor
     {
-        private readonly string precisionLevel = "N16";
+        private readonly string precisionLevel = "N5";
 
         private readonly List<string> expressions;
         private readonly CalculationType calculationType;

@@ -22,6 +22,7 @@ namespace ParserTest
         [TestCase("(2+3) * 5", ExpectedResult = 25)]
         [TestCase("0.21-5", ExpectedResult = -4.79)]
         [TestCase("5-0.21", ExpectedResult = 4.79)]
+        [TestCase("(1*2*3)+1", ExpectedResult = 7)]
         public decimal MixedTest(string textToParse)
         {
             var parser = new Parser(textToParse);
