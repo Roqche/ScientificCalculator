@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScientificCalculator", "ScientificCalculator\ScientificCalculator.csproj", "{673F3646-7FB3-4A83-A00A-DFB0C8183431}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator", "ClassLibrary1\Calculator.csproj", "{9CFE7500-B184-43CB-AE15-5CD1F0A3F66C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator", "Calculator\Calculator.csproj", "{9CFE7500-B184-43CB-AE15-5CD1F0A3F66C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserCore", "Parser\ParserCore.csproj", "{A0A472E0-55A8-4BCB-9A3D-B9BDBE88CB4A}"
 EndProject

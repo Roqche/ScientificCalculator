@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\Calculator.csproj" />
+    <ProjectReference Include="..\Calculator\Calculator.csproj" />
     <ProjectReference Include="..\Parser\ParserCore.csproj" />
   </ItemGroup>
 
